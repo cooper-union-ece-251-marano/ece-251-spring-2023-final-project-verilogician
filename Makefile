@@ -13,9 +13,14 @@ run:
 	vvp test.out
 	read
 	gtkwave dump.vcd
-
+compile:
+	iverilog -g2012 -o test.out testbench.sv
+simulate:
+	vvp test.out
 clean:
 	rm -f *.out *.vcd
+display:
+	gtkwave dump.vcd
 git:
 	git add .
 	git commit && git push -u origin submission
