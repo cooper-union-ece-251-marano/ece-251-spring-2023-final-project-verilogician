@@ -1,12 +1,13 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/opKBEfYw)
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=11114977&assignment_repo_type=AssignmentRepo)
 # Verilog Project
-### by Annie and Aiden.
+### by Annie and Taeyoo
 
 To compile, simulate, then disply with GTKWAVE:
 ```bash
 make
 ```
+press enter after each command, but make sure to wait for the previous to complete
 
 To compile:
 ```bash
@@ -27,3 +28,9 @@ To clean up:
 ```bash
 make clean
 ```
+
+To push to GitHub:
+```bash
+make git
+```
+press "i" to start commenting, press "esc" then type ":wq" and enter
