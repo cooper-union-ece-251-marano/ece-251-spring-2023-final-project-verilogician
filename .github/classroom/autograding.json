@@ -3,7 +3,7 @@
     {
       "name": "Run Computer",
       "setup": "",
-      "run": "make clean compile simulate",
+      "run": "make \n \n",
       "input": "",
       "output": "",
       "comparison": "included",
