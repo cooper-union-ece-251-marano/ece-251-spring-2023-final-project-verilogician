@@ -41,7 +41,7 @@ module mux_param_tb;
   
   mux_param #(.width(width), .delay(delay), .length(length)) uut(.D(D), .S(S), .Q(Q));
 
-  clkGen #(.length(200)) clk();
+  b_clkGen #(.length(200)) clk();
 
   
   initial begin
@@ -135,7 +135,7 @@ module demux2_param_tb;
   
   demux2_param #(.size(size), .delay(delay)) uut(.D(D), .S(S), .Y0(Y[0]), .Y1(Y[1]));
 
-  clkGen #(.length(150)) clk();
+  b_clkGen #(.length(150)) clk();
 
           
   initial begin
@@ -163,7 +163,7 @@ module demux_param_tb;
   
   demux_param #(.width(width), .delay(delay), .length(length)) uut(.Y(Y), .S(S), .D(D));
 
-  clkGen #(.length(200)) clk();
+  b_clkGen #(.length(200)) clk();
   
   initial begin
     $dumpfile("dump.vcd");
@@ -226,7 +226,7 @@ module regFile_param_tb;
   
   regFile_param #(.width(width), .length(length), .delay(delay)) uut(.clk(clk), .D(D), .Q1(Q1), .Q2(Q2), .RS1(RS1), .RS2(RS2), .WS(WS));
 
-  clkGen #(.period(10), .length(100)) clkGen(.clk(clk));
+  b_clkGen #(.period(10), .length(100)) b_clkGen(.clk(clk));
 
   initial begin
     $dumpfile("dump.vcd");
@@ -331,7 +331,7 @@ module mips_regFile_tb;
   
   regFile_param #(.width(width), .length(length), .delay(delay)) uut(.clk(clk), .D(D), .Q1(Q1), .Q2(Q2), .RS1(RS1), .RS2(RS2), .WS(WS));
 
-  clkGen #(.period(10), .length(100)) clkGen(.clk(clk));
+  b_clkGen #(.period(10), .length(100)) b_clkGen(.clk(clk));
 
   initial begin
     $dumpfile("dump.vcd");
@@ -422,7 +422,7 @@ module comparator_tb;
   wire G;
 
   comparator #(.delay(delay)) uut(.A(A), .B(B), .L(L), .E(E), .G(G), .Lin(Lin), .Gin(Gin));
-  clkGen #(.period(10), .length(200)) clkGen(.clk(clk));
+  b_clkGen #(.period(10), .length(200)) b_clkGen(.clk(clk));
 
           
   initial begin
@@ -494,7 +494,7 @@ module comparator_param_tb;
   wire G;
 
   comparator_param #(.delay(delay), .size(size)) uut(.A(A), .B(B), .L(L), .E(E), .G(G), .Lin(Lin), .Gin(Gin));
-  clkGen #(.period(10), .length(200)) clkGen(.clk(clk));
+  b_clkGen #(.period(10), .length(200)) b_clkGen(.clk(clk));
 
           
   initial begin
@@ -564,7 +564,7 @@ module b_program_counter_tb;
 
   assign imm4 = imm * 4;
   b_program_counter #(.width(32), .op_w(6)) uut(.clk(clk), .reset(reset), .jump(jump), .imm(imm), .pc(pc));
-  clkGen #(.period(10), .length(600)) clkGen(.clk(clk));
+  b_clkGen #(.period(10), .length(600)) b_clkGen(.clk(clk));
 
   initial begin
     $dumpfile("dump.vcd");
@@ -607,7 +607,7 @@ module b_sign_extend_tb;
   reg clk;
 
   b_sign_extend #(.iw(4), .ow(8)) uut(.in(in), .out(out));
-  clkGen #(.period(10), .length(600)) clkGen(.clk(clk));
+  b_clkGen #(.period(10), .length(600)) b_clkGen(.clk(clk));
 
   initial begin
     $dumpfile("dump.vcd");
@@ -643,7 +643,7 @@ module b_memory_tb;
   reg[size-1:0] inputs;
   wire[size-1:0] outputs;
   comparator #(.delay(delay)) uut(.A(A), .B(B), .L(L), .E(E), .G(G));
-  clkGen #(.period(10), .length(600)) clkGen(.clk(clk));
+  b_clkGen #(.period(10), .length(600)) b_clkGen(.clk(clk));
 
   initial begin
     $dumpfile("dump.vcd");
@@ -680,7 +680,7 @@ module template_tb;
   reg[size-1:0] inputs;
   wire[size-1:0] outputs;
   comparator #(.delay(delay)) uut(.A(A), .B(B), .L(L), .E(E), .G(G));
-  clkGen #(.period(10), .length(600)) clkGen(.clk(clk));
+  b_clkGen #(.period(10), .length(600)) b_clkGen(.clk(clk));
 
   initial begin
     $dumpfile("dump.vcd");

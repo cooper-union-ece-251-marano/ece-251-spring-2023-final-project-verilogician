@@ -1,6 +1,7 @@
 `timescale 1ns / 1ps
 
-module clkGen
+
+module b_clkGen
   #(
     parameter period = 50,
     parameter length = 500
@@ -148,7 +149,6 @@ module mux_param
       assign tmp[i+length-1] = D[i];
     end
     for (i = 0; i < length - 1; i = i + 1) begin
-      //mux2 #(.delay(delay)) mux2(.A(tmp[i*2+1]), .B(tmp[i*2+2]), .S(S[$clog2(i+1)]), .Q(tmp[i]));
       mux2_param #(.size(width), .delay(delay)) mux2_param(.D0(tmp[i*2+1]), .D1(tmp[i*2+2]), .S(S[$clog2(length)-1-$clog2((i+3)>>1)]), .Q(tmp[i]));
     end
   endgenerate
@@ -255,6 +255,7 @@ module reg_param
   endgenerate
 endmodule
 
+/*
 //wip
 module biDshift
   #(
@@ -285,6 +286,7 @@ module biDshift
     end
   endgenerate
 endmodule
+// */
 
 module regFile_param
   #(
