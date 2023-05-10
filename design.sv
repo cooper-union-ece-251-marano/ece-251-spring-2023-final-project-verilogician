@@ -471,7 +471,7 @@ module b_memory
   end
 endmodule
 
-module b_computer
+// module b_computer
   
 
-endmodule
+// endmodule
