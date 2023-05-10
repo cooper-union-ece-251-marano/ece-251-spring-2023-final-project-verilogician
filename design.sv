@@ -450,7 +450,6 @@ module b_sign_extend
     assign out = {{(ow-iw){in[iw-1]}}, in};
 endmodule
 
-//wip
 module b_memory
   #(
     parameter addrSize = 32,
@@ -463,11 +462,16 @@ module b_memory
     output [width-1:0] out
   );
 
-  reg [width-1:0] mem [0:(2^addrSize)];
+  reg [width-1:0] mem [0:2^addrSize-1];
 
-  assign data_out = mem[address];
+  assign out = mem[address];
 
   always @(posedge clk) begin
     mem[address] <= in;
   end
+endmodule
+
+module b_computer
+  
+
 endmodule

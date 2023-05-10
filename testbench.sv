@@ -639,34 +639,47 @@ module b_memory_tb;
   parameter delay = 0;
 
   //change below
-  parameter size = 1;
-  reg[size-1:0] inputs;
-  wire[size-1:0] outputs;
-  comparator #(.delay(delay)) uut(.A(A), .B(B), .L(L), .E(E), .G(G));
-  b_clkGen #(.period(10), .length(600)) b_clkGen(.clk(clk));
+  parameter addrSize = 32;
+  parameter width = 32;
+  reg[addrSize-1:0] address;
+  reg[width-1:0] in;
+  wire[width-1:0] out;
+  reg write;
+  b_memory #(.addrSize(addrSize), .width(width)) uut(.address(address), .in(in), .clk(write), .out(out));
+  b_clkGen #(.period(10), .length(600)) b_clkGen();
 
   initial begin
     $dumpfile("dump.vcd");
 
     //change this
-    $dumpvars(1, A, B, L, E, G);
+    $dumpvars(1, write, address, in, out);
   end
   
   initial begin
 
     //change this
-    A = 0;
-    B = 0;
+    write = 0;
+    address = 0;
+    in = 5;
+    #10;
+    write = 1;
+    #10;
+    write = 0;
     #50;
-    A = 0;
-    B = 1;
+    address = 1;
+    in = 7;
     #50;
-    A = 1;
-    B = 0;
+    address = 0;
     #50;
-    A = 1;
-    B = 1;
+    address = 1;
+    #10;
+    write = 1;
+    #10;
+    write = 0;
+    #10;
+    address = 0;
     #50;
+    address = 1;
   end
 endmodule
 // */
