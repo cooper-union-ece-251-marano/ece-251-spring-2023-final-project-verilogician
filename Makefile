@@ -13,6 +13,8 @@ run:
 	vvp test.out
 	read
 	gtkwave dump.vcd
+set:
+	sed -i -e "s/tmp/$y/" testbench.sv
 compile:
 	iverilog -g2012 -o test.out testbench.sv
 simulate:

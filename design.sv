@@ -219,20 +219,19 @@ module dff
   #(parameter delay = 0)
   (
     input clk,
-    input Rnot,
     input D,
     output Q,
     output Qnot
   );
   
-  wire ND1, ND2, ND3, ND4;
+  wire Dnot, ND1, ND2;
+
+  not #delay (Dnot, D);
+  nand #delay (ND1, D, clk);
+  nand #delay (ND2, Dnot, clk);
+  nand #delay (Q, ND1, Qnot);
+  nand #delay (Qnot, Q, ND2);
   
-  nand #delay (ND1, ND4, ND2);
-  nand #delay (ND2, ND1, clk, Rnot);
-  nand #delay (ND3, ND2, clk, ND4);
-  nand #delay (ND4, ND3, D, Rnot);
-  nand #delay (Q, ND2, Qnot);
-  nand #delay (Qnot, Q, ND3, Rnot);
 endmodule
 
 module reg_param
@@ -242,7 +241,6 @@ module reg_param
   )
   (
     input clk,
-    input Rnot,
     input[size-1:0] D,
     output[size-1:0] Q
   );
@@ -250,7 +248,7 @@ module reg_param
   genvar i;
   generate
     for (i = 0; i < size; i = i + 1) begin
-      dff #(.delay(delay)) dff(.clk(clk), .Rnot(Rnot), .D(D[i]), .Q(Q[i]));
+      dff #(.delay(delay)) dff(.clk(clk), .D(D[i]), .Q(Q[i]));
     end
   endgenerate
 endmodule
@@ -309,13 +307,13 @@ module regFile_param
   wire tmp1[length-1:0];
   wire[width-1:0] tmp2[0:length-1];
 
-  demux_param #(.width(1), .delay(delay), .length(length)) demux_param(.Y(tmp0), .S(WS), .D(1'b1));
+  demux_param #(.width(1), .delay(delay), .length(length)) decoder(.Y(tmp0), .S(WS), .D(1'b1));
 
   genvar i;
   generate
     for (i = 0; i < length; i = i + 1) begin
       and #delay (tmp1[i], tmp0[i], clk);
-      reg_param #(.size(width), .delay(delay)) reg_param(.clk(tmp1[i]), .Rnot(1'b1), .D(D), .Q(tmp2[i]));
+      reg_param #(.size(width), .delay(delay)) reg_param(.clk(tmp1[i]), .D(D), .Q(tmp2[i]));
     end
   endgenerate
 
@@ -456,10 +454,10 @@ module b_memory
     parameter width = 32
   )
   (
-    input [addrSize-1:0] address,
-    input [width-1:0] in,
+    input[addrSize-1:0] address,
+    input[width-1:0] in,
     input clk,
-    output [width-1:0] out
+    output[width-1:0] out
   );
 
   reg [width-1:0] mem [0:2^addrSize-1];
@@ -471,7 +469,8 @@ module b_memory
   end
 endmodule
 
+
 // module b_computer
-  
+
 
 // endmodule

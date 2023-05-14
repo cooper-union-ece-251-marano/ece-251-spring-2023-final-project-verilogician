@@ -214,6 +214,43 @@ endmodule
 // */
 
 /*
+module dff_tb;
+  parameter delay = 0;
+
+  //change below
+  reg write;
+  reg in;
+  wire out;
+  dff uut(.clk(write), .D(in), .Q(out));
+  b_clkGen #(.period(10), .length(600)) b_clkGen(.clk(clk));
+
+  initial begin
+    $dumpfile("dump.vcd");
+
+    //change this
+    $dumpvars(1, write, in, out);
+  end
+  
+  initial begin
+
+    //change this
+    #50;
+    in = 0;
+    #10;
+    write = 1;
+    #5;
+    write = 0;
+    #50;
+    in = 1;
+    #10;
+    write = 1;
+    #5;
+    write = 0;
+  end
+endmodule
+// */
+
+/*
 module regFile_param_tb;
   parameter width = 8;
   parameter length = 128;
@@ -634,7 +671,7 @@ module b_sign_extend_tb;
 endmodule
 // */
 
-// /*
+/*
 module b_memory_tb;
   parameter delay = 0;
 
@@ -680,6 +717,35 @@ module b_memory_tb;
     address = 0;
     #50;
     address = 1;
+  end
+endmodule
+// */
+
+// /*
+module b_print_tb;
+  //change below
+  parameter width = 32;
+  reg[width-1:0] data;
+  wire[width-1:0] out;
+
+  reg prt;
+  reg_param #(.size(32)) printer(.clk(prt), .D(data), .Q(out));
+  b_clkGen #(.period(10), .length(600)) b_clkGen(.clk(clk));
+
+  initial begin
+    $dumpfile("dump.vcd");
+
+    //change this
+    $dumpvars(1, data, prt, out);
+    $monitor("Fib Output: %d", out);
+  end
+
+  initial begin
+    data = 5;
+
+    #10;  // Delay for simulation purposes
+
+    prt = 1;
   end
 endmodule
 // */
