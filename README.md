@@ -10,15 +10,15 @@ Team Members: Annie He, Taeyoo Kim
 ## Table of Contents
 
 - [CPU Design by Verilogician](#cpu-design-by-verilogician)
-	- [Table of Contents](#table-of-contents)
-	- [Makefile Instructions](#makefile-instructions)
-	- [Architecture](#architecture)
-		- [Instruction Format](#instruction-format)
-		- [Instruction Set](#instruction-set)
-		- [Register File](#register-file)
-	- [Implementation](#implementation)
-		- [Fibonacci Assembly](#fibonacci-assembly)
-		- [Fibonacci Binary](#fibonacci-binary)
+  - [Table of Contents](#table-of-contents)
+  - [Makefile Instructions](#makefile-instructions)
+  - [Architecture](#architecture)
+    - [Instruction Format](#instruction-format)
+    - [Instruction Set](#instruction-set)
+    - [Register File](#register-file)
+  - [Implementation](#implementation)
+    - [Fibonacci Assembly](#fibonacci-assembly)
+    - [Fibonacci Binary](#fibonacci-binary)
 
 ## Makefile Instructions
 
@@ -93,101 +93,101 @@ This simplified ISA uses only one instruction type.
 ### Fibonacci Assembly
 
 ```asm
-	add $a0, $zero, $zero, input	#argument: input
-	jal fib							#fib
-	prt $v0			    			#print the output
+    add $a0, $zero, $zero, input    #argument: input
+    jal fib                         #fib
+    prt $v0                         #print the output
 fib:
-	add $sp, $sp, $zero, -8			#offsets the stack pointer to create a stack frame
-	sw $ra, $sp, 8					#stores the return address on the stack
-	sw $s0, $sp, 4					#stores s0 on the stack
-	sw $s1, $sp, 0					#stores s1 on the stack
+    add $sp, $sp, $zero, -8         #offsets the stack pointer to create a stack frame
+    sw $ra, $sp, 8                  #stores the return address on the stack
+    sw $s0, $sp, 4                  #stores s0 on the stack
+    sw $s1, $sp, 0                  #stores s1 on the stack
 
-	add $s0, $a0, $zero, 0 			#copies the argument n onto s0
+    add $s0, $a0, $zero, 0          #copies the argument n onto s0
 
-	bne $s0, $zero, elif			#jumps to elif if n is not zero
-	add $v0, $zero, $zero, 0		#sets the return value to 0
-	j end							#jumps to the end of function
+    bne $s0, $zero, elif            #jumps to elif if n is not zero
+    add $v0, $zero, $zero, 0        #sets the return value to 0
+    j end                           #jumps to the end of function
 elif:
-	add $t0, $zero, $zero, 1
-	bne $s0, $t0, else				#jumps to else if n is not 1
-	add $v0, $zero, $zero, 1		#sets the return value to 1
-	j end							#jumps to the end of function
+    add $t0, $zero, $zero, 1
+    bne $s0, $t0, else              #jumps to else if n is not 1
+    add $v0, $zero, $zero, 1        #sets the return value to 1
+    j end                           #jumps to the end of function
 else:
-	add $a0, $s0, $zero, -1			#sets the argument to n-1
-	jal fib							#calls self recursively
-	add $s1, $v0, $zero, 0			#copies the return value onto s1
+    add $a0, $s0, $zero, -1         #sets the argument to n-1
+    jal fib                         #calls self recursively
+    add $s1, $v0, $zero, 0          #copies the return value onto s1
 
-	add $a0, $s0, $zero, -2			#sets the argument to n-2
-	jal fib							#calls self recursively
-	add $v0, $s1, $v0, 0			#sets the return value to sum of two
+    add $a0, $s0, $zero, -2         #sets the argument to n-2
+    jal fib                         #calls self recursively
+    add $v0, $s1, $v0, 0            #sets the return value to sum of two
 end:
-	lw $s1, $sp, 0					#restores s1
-	lw $s0, $sp, 4					#restores s0
-	lw $ra, $sp, 8					#restores the return address
-	add $sp, $sp, $zero, 8			#restores the stack pointer
-	j $ra							#returns the function
+    lw $s1, $sp, 0                  #restores s1
+    lw $s0, $sp, 4                  #restores s0
+    lw $ra, $sp, 8                  #restores the return address
+    add $sp, $sp, $zero, 8          #restores the stack pointer
+    j $ra                           #returns the function
 ```
 
 ### Fibonacci Binary
 
 ```
     opcode  rd      rs      rt      imm
-	--------------------------------------------
-    00000 	00100 	00000 	00000 	000000000000
-    add	    $a0		$zero   $zero   input	
-    00101 	00000 	00000 	00000 	000000000011
+    --------------------------------------------
+    00000   00100   00000   00000   000000000000
+    add	    $a0     $zero   $zero   input	
+    00101   00000   00000   00000   000000000011
     jal                             fib
     01000   00000   00001   00000   000000000000
     prt             $v0
 fib 000000000011:
     00000   11110   11110   00000   111111111000
-	add     $sp     $sp     $zero   -8
+    add     $sp     $sp     $zero   -8
     00111   00000   11111   11110   000000001000
-	sw              $ra     $sp     8
+    sw              $ra     $sp     8
     00111   00000   10100   11110   000000000100
-	sw              $s0     $sp     4
+    sw              $s0     $sp     4
     00111   00000   10101   11110   000000000000
-	sw              $s1     $sp     0
+    sw              $s1     $sp     0
     00000   10100   00100   00000   000000000000
-	add     $s0     $a0     $zero   0
+    add     $s0     $a0     $zero   0
     00011   00000   00100   00000   000000001011
-	bne             $s0     $zero   elif
+    bne             $s0     $zero   elif
     00000   00001   00000   00000   000000000000
-	add     $v0     $zero   $zero   0
+    add     $v0     $zero   $zero   0
     00100   00000   00000   00000   000000010101
-	j                               end
+    j                               end
 elif 000000001011:
     00000   01010   00000   00000   000000000001
-	add     $t0     $zero   $zero   1
+    add     $t0     $zero   $zero   1
     00011   00000   00100   01010   000000001111
-	bne             $s0     $t0     else
+    bne             $s0     $t0     else
     00000   00001   00000   00000   000000000001
-	add     $v0     $zero   $zero   1
+    add     $v0     $zero   $zero   1
     00100   00000   00000   00000   000000010101
-	j                               end
+    j                               end
 else 000000001111:
     00000   00100   10100   00000   111111111111
-	add     $a0     $s0     $zero   -1
+    add     $a0     $s0     $zero   -1
     00101   00000   00000   00000   000000000011
-	jal                             fib
+    jal                             fib
     00000   10101   00001   00000   000000000000
-	add     $s1     $v0     $zero   0
+    add     $s1     $v0     $zero   0
     00000   00100   10100   00000   111111111110
-	add     $a0     $s0     $zero   -2
+    add     $a0     $s0     $zero   -2
     00101   00000   00000   00000   000000000011
-	jal                             fib
+    jal                             fib
     00000   00001   10101   00001   000000000000
-	add     $v0     $s1     $v0     0
+    add     $v0     $s1     $v0     0
 end 000000010101:
     00110   00000   10101   11110   000000000000
-	lw              $s1     $sp     0
+    lw              $s1     $sp     0
     00110   00000   10100   11110   000000000100
-	lw              $s0     $sp     4
+    lw              $s0     $sp     4
     00110   00000   11111   11110   000000001000
-	lw              $ra     $sp     8
-    00000 	11110 	11110 	00000 	000000001000
-	add     $sp     $sp     $zero   8
+    lw              $ra     $sp     8
+    00000   11110   11110   00000   000000001000
+    add     $sp     $sp     $zero   8
     00100   00000   11111   00000   000000000000
-	j               $ra
+    j               $ra
 ```
 
