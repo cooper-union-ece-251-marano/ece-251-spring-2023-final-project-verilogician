@@ -22,10 +22,16 @@ Team Members: Annie He, Taeyoo Kim
 
 ## Makefile Instructions
 
-To compile, simulate, then disply with GTKWAVE:
+To set input, compile, simulate, then disply with GTKWAVE:
 ```bash
 make
-#press enter after each command, but make sure to wait for the previous to complete
+#press enter after each command, but make sure to wait for the previous to complete (last line will say "read")
+```
+
+To set input:
+```bash
+make set
+#enter a valid decimal number
 ```
 
 To compile:

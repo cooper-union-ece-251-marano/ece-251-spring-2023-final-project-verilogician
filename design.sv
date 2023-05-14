@@ -460,12 +460,16 @@ module b_memory
     output[width-1:0] out
   );
 
-  reg [width-1:0] mem [0:2^addrSize-1];
+  reg [width-1:0] mem[0:2**addrSize-1];
 
   assign out = mem[address];
 
   always @(posedge clk) begin
     mem[address] <= in;
+  end
+
+  initial begin
+    $readmemb("fib.exe", mem);
   end
 endmodule
 

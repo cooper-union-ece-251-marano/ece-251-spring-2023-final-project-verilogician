@@ -1,20 +1,19 @@
-#
-# Makefile for Verilog building
-# 
-# USE THE FOLLOWING COMMANDS WITH THIS MAKEFILE
-#	"make" - compiles verilog design, runs the file, opens in gtkwave (press enter between each, wait for the previous to complete)
-#	"make clean" - cleans up the generated files
-# 
-###############################################################################
-#MAKE DIRECTIVES
 run:
-	iverilog -g2012 -o test.out testbench.sv
+	make set
+	make compile
 	read
-	vvp test.out
+	make simulate
 	read
-	gtkwave dump.vcd
+	make display
 set:
-	sed -i -e "s/tmp/$y/" testbench.sv
+	@read -p "Enter input: " INPUT; \
+	if [ -n "$$INPUT" ] && [ "$$INPUT" -eq "$$INPUT" ] 2>/dev/null; then \
+		BINARY=$$(python -c "print(bin($$INPUT)[2:].zfill(12))"); \
+		sed -i "1s/.*/00000001000000000000$${BINARY}/" fib.exe; \
+	else \
+		echo "Invalid input. Please enter a valid number."; \
+		make set; \
+	fi
 compile:
 	iverilog -g2012 -o test.out testbench.sv
 simulate:

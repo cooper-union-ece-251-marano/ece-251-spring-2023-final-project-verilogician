@@ -676,9 +676,9 @@ module b_memory_tb;
   parameter delay = 0;
 
   //change below
-  parameter addrSize = 32;
+  parameter addrSize = 12;
   parameter width = 32;
-  reg[addrSize-1:0] address;
+  reg[2**addrSize-1:0] address;
   reg[width-1:0] in;
   wire[width-1:0] out;
   reg write;
@@ -693,35 +693,34 @@ module b_memory_tb;
   end
   
   initial begin
-
     //change this
     write = 0;
-    address = 0;
+    address = 15;
     in = 5;
     #10;
     write = 1;
     #10;
     write = 0;
     #50;
-    address = 1;
+    address = 16;
     in = 7;
     #50;
-    address = 0;
+    address = 15;
     #50;
-    address = 1;
+    address = 16;
     #10;
     write = 1;
     #10;
     write = 0;
     #10;
-    address = 0;
+    address = 15;
     #50;
-    address = 1;
+    address = 16;
   end
 endmodule
 // */
 
-// /*
+/*
 module b_print_tb;
   //change below
   parameter width = 32;
@@ -749,6 +748,32 @@ module b_print_tb;
   end
 endmodule
 // */
+
+// /*
+module computer_tb;
+  parameter addrSize = 12;
+  parameter width = 32;
+  reg[addrSize-1:0] address;
+  reg[width-1:0] in;
+  wire[width-1:0] out;
+  reg write;
+  integer i;
+  b_memory #(.addrSize(addrSize), .width(width)) mem(.address(address), .in(in), .clk(write), .out(out));
+  b_clkGen #(.period(10), .length(600)) b_clkGen(.clk(clk));
+
+  initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars(1, address, out);
+  end
+
+  initial begin
+    #50;
+    for (i = 0; i < 26; i = i + 1) begin
+      address = i;
+      #10;
+    end
+  end
+endmodule
 
 /*
 module template_tb;
