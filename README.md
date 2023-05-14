@@ -93,7 +93,8 @@ This simplified ISA uses only one instruction type.
 ### Fibonacci Assembly
 
 ```makefile
-    add $a0, $zero, $zero, input    #argument: input
+main:
+    add $a0, $zero, $zero, input    #store the input
     jal fib                         #fib
     prt $v0                         #print the output
 fib:
