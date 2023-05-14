@@ -92,7 +92,7 @@ This simplified ISA uses only one instruction type.
 
 ### Fibonacci Assembly
 
-```asm
+```makefile
     add $a0, $zero, $zero, input    #argument: input
     jal fib                         #fib
     prt $v0                         #print the output
@@ -130,7 +130,7 @@ end:
 
 ### Fibonacci Binary
 
-```
+```q
     opcode  rd      rs      rt      imm
     --------------------------------------------
     00000   00100   00000   00000   000000000000
