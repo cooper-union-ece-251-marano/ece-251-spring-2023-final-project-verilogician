@@ -251,6 +251,43 @@ endmodule
 // */
 
 /*
+module reg_param_tb;
+  parameter delay = 0;
+
+  //change below
+  reg write;
+  reg[31:0] in;
+  wire[31:0] out;
+  reg_param uut(.clk(write), .D(in), .Q(out));
+  b_clkGen #(.period(10), .length(600)) b_clkGen(.clk(clk));
+
+  initial begin
+    $dumpfile("dump.vcd");
+
+    //change this
+    $dumpvars(1, write, in, out);
+  end
+  
+  initial begin
+
+    //change this
+    #50;
+    in = 0;
+    #10;
+    write = 1;
+    #5;
+    write = 0;
+    #50;
+    in = 1;
+    #10;
+    write = 1;
+    #5;
+    write = 0;
+  end
+endmodule
+// */
+
+/*
 module regFile_param_tb;
   parameter width = 8;
   parameter length = 128;
@@ -751,29 +788,11 @@ endmodule
 
 // /*
 module computer_tb;
-  parameter addrSize = 12;
-  parameter width = 32;
-  reg[addrSize-1:0] address;
-  reg[width-1:0] in;
-  wire[width-1:0] out;
-  reg write;
-  integer i;
-  b_memory #(.addrSize(addrSize), .width(width)) mem(.address(address), .in(in), .clk(write), .out(out));
-  b_clkGen #(.period(10), .length(600)) b_clkGen(.clk(clk));
 
-  initial begin
-    $dumpfile("dump.vcd");
-    $dumpvars(1, address, out);
-  end
+  b_computer uut();
 
-  initial begin
-    #50;
-    for (i = 0; i < 26; i = i + 1) begin
-      address = i;
-      #10;
-    end
-  end
 endmodule
+// */
 
 /*
 module template_tb;

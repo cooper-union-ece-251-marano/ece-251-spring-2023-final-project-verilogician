@@ -3,8 +3,8 @@
 
 module b_clkGen
   #(
-    parameter period = 50,
-    parameter length = 500
+    // parameter length = 500,
+    parameter period = 50
   )
   (
     output reg clk
@@ -14,7 +14,7 @@ module b_clkGen
 
   always #(period/2) clk = ~clk;
 
-  initial #length $finish;
+  // initial #length $finish;
 endmodule
 
 module halfAdder
@@ -408,37 +408,32 @@ endmodule
 
 module b_program_counter
   #(
-    parameter width = 32,
-    parameter op_w = 6
+    parameter width = 12
   )
   (
     input clk,
-    input reset,
     input jump,
-    input [width-1-op_w:0] imm,
+    input [width-1:0] imm,
     output reg [width-1:0] pc
   );
 
   initial begin
-    pc <= 0;
+    pc = 0;
   end
 
   always @(posedge clk) begin
-      if (reset) begin
-        pc <= 0;
-      end
-      else if (jump) begin
-        pc <= {pc[width-1:width-1-op_w+2], imm << 2};
+      if (jump) begin
+        pc = imm;
       end
       else begin
-        pc <= pc + 4;
+        pc = pc + 1;
       end
   end
 endmodule
 
 module b_sign_extend
   #(
-    parameter iw = 16,
+    parameter iw = 12,
     parameter ow = 32
   )
   (
@@ -450,7 +445,7 @@ endmodule
 
 module b_memory
   #(
-    parameter addrSize = 32,
+    parameter addrSize = 12,
     parameter width = 32
   )
   (
@@ -473,8 +468,218 @@ module b_memory
   end
 endmodule
 
+module b_computer;
+  reg[31:0] regIn;
+  wire[31:0] signExtImm, rsOut, rtOut, curIns, memOut;
+  reg pcSel, memSel, regSel, pcNext, regWrite, pcJump, getIns, memWrite;
+  wire[4:0] opcode, rd, rs, rt, regAddr;
+  reg[4:0] ra;
+  wire[11:0] jumpAddr, memAddr, pcOut;
+  wire[11:0] imm;
+  wire clk;
+  reg[11:0] pcAddr;
 
-// module b_computer
+  assign pcAddr = rtOut[11:0] + imm;
+
+  b_clkGen #(.period(50)) clkGen(.clk(clk));
+
+  b_sign_extend #(.iw(12), .ow(32)) signExt(.in(imm), .out(signExtImm));
+
+  mux2_param #(.size(12), .delay(0)) pcMux(.D0(imm), .D1(rsOut[11:0]), .S(pcSel), .Q(jumpAddr));
+  b_program_counter #(.width(12)) program_counter(.clk(pcNext), .jump(pcJump), .imm(jumpAddr), .pc(pcOut));
+
+  mux2_param #(.size(5), .delay(0)) regMux(.D0(rd), .D1(ra), .S(regSel), .Q(regAddr));
+  regFile_param #(.width(32), .length(32), .delay(0)) regFile(.clk(regWrite), .D(regIn), .Q1(rsOut), .Q2(rtOut), .RS1(rs), .RS2(rt), .WS(regAddr));
+
+  b_separator separator(.word(curIns), .opcode(opcode), .rd(rd), .rs(rs), .rt(rt), .imm(imm));
 
 
-// endmodule
+  mux2_param #(.size(12), .delay(0)) memMux(.D0(pcOut), .D1(rtOut[11:0] + imm), .S(memSel), .Q(memAddr));
+  b_memory #(.addrSize(12), .width(32)) memory(.address(memAddr), .in(rsOut), .clk(memWrite), .out(memOut));
+
+  reg_param instruction_memory(.clk(getIns), .D(memOut), .Q(curIns));
+
+  initial begin
+    pcSel = 0;
+    memSel = 0;
+    regWrite = 0;
+    getIns = 0;
+    pcNext = 0;
+
+    regSel = 1;
+    ra = 30;
+    regIn = 4095;
+    #5;
+    regWrite = 1;
+    #5;
+    regWrite = 0;
+    #5;
+    ra = 0;
+    regIn = 0;
+    #5;
+    regWrite = 1;
+    #5;
+    regWrite = 0;
+    #5;
+    regSel = 0;
+
+    getIns = 1;
+    #5;
+    getIns = 0;
+    #5;
+  end
+
+  initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars(1, opcode, rd, rs, rt, rsOut, rtOut, memOut, pcOut);
+  end
+
+  always @(posedge clk) begin
+    getIns = 1;
+    #5;
+    getIns = 0;
+  end
+
+  always @(negedge getIns) begin
+    //add
+    if (opcode == 0) begin
+      regIn = rsOut + rtOut + signExtImm;
+      #5;
+      regWrite = 1;
+      #5;
+      regWrite = 0;
+      #5;
+      pcNext = 1;
+      #5;
+      pcNext = 0;
+      #5;
+    end
+    //bne
+    else if (opcode == 3) begin
+      if (rsOut != rtOut) begin
+        pcSel = 0;
+        #5;
+        pcJump = 1;
+        #5;
+        pcNext = 1;
+        #5;
+        pcNext = 0;
+        #5;
+        pcJump = 0;
+        #5;
+      end
+      else begin
+        pcNext = 1;
+        #5;
+        pcNext = 0;
+        #5;
+      end
+    end
+    //j
+    else if (opcode == 4) begin
+      if (rs == 0) begin
+        pcSel = 0;
+        #5;
+        pcJump = 1;
+        #5;
+        pcNext = 1;
+        #5;
+        pcNext = 0;
+        #5;
+        pcJump = 0;
+        #5;
+      end
+      else begin
+        pcSel = 1;
+        #5;
+        pcJump = 1;
+        #5;
+        pcNext = 1;
+        #5;
+        pcNext = 0;
+        #5;
+        pcJump = 0;
+        #5;  
+      end
+    end
+    //jal
+    else if (opcode == 5) begin
+      regIn = pcOut + 1;
+      #5;
+      regWrite = 1;
+      #5;
+      regWrite = 0;
+      #5;
+      pcSel = 0;
+      #5;
+      pcJump = 1;
+      #5;
+      pcNext = 1;
+      #5;
+      pcNext = 0;
+      #5;
+      pcJump = 0;
+      #5;
+    end
+    //lw
+    else if (opcode == 6) begin
+      memSel = 1;
+      #5;
+      regIn = memOut;
+      #5;
+      regWrite = 1;
+      #5;
+      regWrite = 0;
+      #5;
+      memSel = 0;
+      #5;
+      pcNext = 1;
+      #5;
+      pcNext = 0;
+      #5;
+    end
+    //sw
+    else if (opcode == 7) begin
+      memSel = 1;
+      #5;
+      memWrite = 1;
+      #5;
+      memWrite = 0;
+      #5;
+      memSel = 0;
+      #5;
+      pcNext = 1;
+      #5;
+      pcNext = 0;
+      #5;
+    end
+    //prt
+    else if (opcode == 8) begin
+      $display("The Fibonacci is: %d", rsOut);
+      $finish;
+    end
+    else begin
+      pcNext = 1;
+      #5;
+      pcNext = 0;
+      #5;
+    end
+  end
+endmodule
+
+module b_separator
+(
+  input [31:0] word,
+  output [4:0] opcode,
+  output [4:0] rd,
+  output [4:0] rs,
+  output [4:0] rt,
+  output [11:0] imm
+);
+
+  assign opcode = word >> 27;
+  assign rd = word >> 22;
+  assign rs = word >> 17;
+  assign rt = word >> 12;
+  assign imm = word[11:0];
+endmodule
