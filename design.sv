@@ -253,39 +253,6 @@ module reg_param
   endgenerate
 endmodule
 
-/*
-//wip
-module biDshift
-  #(
-    parameter size = 32,
-    parameter delay = 0
-  )
-
-  //input left or right
-  //input clk
-  //output Q: 32bits parallel output
-  //input D: bit going into the shift reg (can be used for sign extension)
-  //synchronous reset
-
-  (
-    input clk,
-    input dir,
-    input Rnot,
-    input Lnot,
-    input[size-1:0] D,
-    input A,
-    output[size-1:0] Q
-  );
-
-  genvar i;
-  generate
-    for (i = 0; i < size; i = i + 1) begin
-      dff #(.delay(delay)) dff(.clk(clk), .Rnot(Rnot), .D(D[i]), .Q(Q[i]));
-    end
-  endgenerate
-endmodule
-// */
-
 module regFile_param
   #(
     parameter width = 32,
@@ -469,6 +436,7 @@ module b_memory
 endmodule
 
 module b_computer;
+  parameter delay = 5;
   reg[31:0] regIn;
   wire[31:0] signExtImm, rsOut, rtOut, curIns, memOut;
   reg pcSel, memSel, regSel, pcNext, regWrite, pcJump, getIns, memWrite;
@@ -481,7 +449,7 @@ module b_computer;
 
   assign pcAddr = rtOut[11:0] + imm;
 
-  b_clkGen #(.period(50)) clkGen(.clk(clk));
+  b_clkGen #(.period(10*delay)) clkGen(.clk(clk));
 
   b_sign_extend #(.iw(12), .ow(32)) signExt(.in(imm), .out(signExtImm));
 
@@ -509,24 +477,24 @@ module b_computer;
     regSel = 1;
     ra = 30;
     regIn = 4095;
-    #5;
+    #delay;
     regWrite = 1;
-    #5;
+    #delay;
     regWrite = 0;
-    #5;
+    #delay;
     ra = 0;
     regIn = 0;
-    #5;
+    #delay;
     regWrite = 1;
-    #5;
+    #delay;
     regWrite = 0;
-    #5;
+    #delay;
     regSel = 0;
 
     getIns = 1;
-    #5;
+    #delay;
     getIns = 0;
-    #5;
+    #delay;
   end
 
   initial begin
@@ -536,7 +504,7 @@ module b_computer;
 
   always @(posedge clk) begin
     getIns = 1;
-    #5;
+    #delay;
     getIns = 0;
   end
 
@@ -544,114 +512,114 @@ module b_computer;
     //add
     if (opcode == 0) begin
       regIn = rsOut + rtOut + signExtImm;
-      #5;
+      #delay;
       regWrite = 1;
-      #5;
+      #delay;
       regWrite = 0;
-      #5;
+      #delay;
       pcNext = 1;
-      #5;
+      #delay;
       pcNext = 0;
-      #5;
+      #delay;
     end
     //bne
     else if (opcode == 3) begin
       if (rsOut != rtOut) begin
         pcSel = 0;
-        #5;
+        #delay;
         pcJump = 1;
-        #5;
+        #delay;
         pcNext = 1;
-        #5;
+        #delay;
         pcNext = 0;
-        #5;
+        #delay;
         pcJump = 0;
-        #5;
+        #delay;
       end
       else begin
         pcNext = 1;
-        #5;
+        #delay;
         pcNext = 0;
-        #5;
+        #delay;
       end
     end
     //j
     else if (opcode == 4) begin
       if (rs == 0) begin
         pcSel = 0;
-        #5;
+        #delay;
         pcJump = 1;
-        #5;
+        #delay;
         pcNext = 1;
-        #5;
+        #delay;
         pcNext = 0;
-        #5;
+        #delay;
         pcJump = 0;
-        #5;
+        #delay;
       end
       else begin
         pcSel = 1;
-        #5;
+        #delay;
         pcJump = 1;
-        #5;
+        #delay;
         pcNext = 1;
-        #5;
+        #delay;
         pcNext = 0;
-        #5;
+        #delay;
         pcJump = 0;
-        #5;  
+        #delay;  
       end
     end
     //jal
     else if (opcode == 5) begin
       regIn = pcOut + 1;
-      #5;
+      #delay;
       regWrite = 1;
-      #5;
+      #delay;
       regWrite = 0;
-      #5;
+      #delay;
       pcSel = 0;
-      #5;
+      #delay;
       pcJump = 1;
-      #5;
+      #delay;
       pcNext = 1;
-      #5;
+      #delay;
       pcNext = 0;
-      #5;
+      #delay;
       pcJump = 0;
-      #5;
+      #delay;
     end
     //lw
     else if (opcode == 6) begin
       memSel = 1;
-      #5;
+      #delay;
       regIn = memOut;
-      #5;
+      #delay;
       regWrite = 1;
-      #5;
+      #delay;
       regWrite = 0;
-      #5;
+      #delay;
       memSel = 0;
-      #5;
+      #delay;
       pcNext = 1;
-      #5;
+      #delay;
       pcNext = 0;
-      #5;
+      #delay;
     end
     //sw
     else if (opcode == 7) begin
       memSel = 1;
-      #5;
+      #delay;
       memWrite = 1;
-      #5;
+      #delay;
       memWrite = 0;
-      #5;
+      #delay;
       memSel = 0;
-      #5;
+      #delay;
       pcNext = 1;
-      #5;
+      #delay;
       pcNext = 0;
-      #5;
+      #delay;
     end
     //prt
     else if (opcode == 8) begin
@@ -660,9 +628,9 @@ module b_computer;
     end
     else begin
       pcNext = 1;
-      #5;
+      #delay;
       pcNext = 0;
-      #5;
+      #delay;
     end
   end
 endmodule
