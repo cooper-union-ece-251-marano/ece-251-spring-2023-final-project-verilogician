@@ -5,7 +5,7 @@ Professor: Rob Marano
 Team Name: Verilogician  
 Team Members: Annie He, Taeyoo Kim  
 [Open in GitHub](https://github.com/cooper-union-ece-251-marano/ece-251-spring-2023-final-project-verilogician)  
-[Watch demonstration on YouTube](https://youtu.be/IJKG_e8MXfM)
+[Watch demonstration on YouTube](https://youtu.be/j9Fcllo_UHU)
 
 ## Table of Contents
 
