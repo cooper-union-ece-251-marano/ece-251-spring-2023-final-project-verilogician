@@ -197,7 +197,7 @@ module demux_param
   (
     output[width-1:0] Y[length-1:0],
     input[$clog2(length)-1:0] S,
-    input reg[width-1:0] D
+    input[width-1:0] D
   );
 
   wire[width-1:0] tmp[length*2-2:0];
